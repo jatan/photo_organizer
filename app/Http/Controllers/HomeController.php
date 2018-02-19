@@ -25,7 +25,9 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {   
+        $answer = new Answer();
+        $count = $answer->getCountOfPics();
         return view('home')->with([
             'frame_status'  => Answer::getFrameStatus(),
             'photo_types'   => Answer::getPhototypes(),
@@ -47,11 +49,11 @@ class HomeController extends Controller
         $answer->save();
         return redirect(route('home'));
     }
-/*
+
     public function calculate(Request $request)
     {
         $answer = new Answer();
         $result = $answer->getCountOfPics($request);
         return $result; // This will dump and die
-    }*/
+    }
 }

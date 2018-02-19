@@ -19,3 +19,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/home', 'HomeController@processForm')->name('formSubmit');
+
+
+Route::post('/calculate','HomeController@calculate')->name('calculate');

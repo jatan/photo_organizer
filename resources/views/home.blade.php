@@ -58,5 +58,50 @@
       </div>
     </div>
   </div>
+  <br/>
+  <div class="row justify-content-center">
+    <div class="col-md-9">
+      <div class="card card-default">
+        <div class="card-header">Counter</div>
+        <div class="card-body">
+          <form method = "POST" id = "myForm" action="{{route('calculate')}}">
+
+            <div class="row">
+              @foreach($people as $value=>$label)
+              <div class="col-sm-4">
+                <input type="checkbox" name="people[]" id = "Cal_{{$value}}" value="{{$value}}"> 
+                <label for="Cal_{{$value}}">
+                  {{$label}}
+                </label>
+              </div>
+              @endforeach
+            </div>
+            <button class="btn btn-primary"> Calculate</button>
+          </form>
+          <div class="col sm-12">
+            <label class="h1" id="count"> </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script>
+  $(function () {
+    $('#myForm').on('submit', function (e) {
+      e.preventDefault();
+      $.ajax({
+        type: 'post',
+        url: '/calculate',
+        data: $('#myForm').serialize(),
+        success: function (data) {
+          $('#count').html(data);
+          console.log(data); 
+        }
+      });
+    });
+  });
+</script>
 
 @endsection

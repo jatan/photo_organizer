@@ -77,6 +77,24 @@ class Answer extends Model
 		return self::$people;
 	}
 
+	public function getCountOfPics($query=null)
+	{
+			$raw='';
+		if($query['people'] == null){
+			$result = $this->where('user_id',Auth::user()->id)->count();
+		}
+		else{
+			foreach ($query['people'] as $people) {
+				$raw .= $people ."=1"; 
+				if($people != $query['people'][count($query['people'])-1])
+					$raw .= " AND ";
+			}
+			$result = $this->whereRaw($raw)->where('user_id',Auth::user()->id)->count();
+		}
+
+		return $result;
+	}
+
 	//Seeder Calls this Method to add Dummy records
 	public function generateAnswers()
 	{
@@ -92,6 +110,14 @@ class Answer extends Model
 	            'food' => rand(0,1),
 	            'randoms' => rand(0,1)
 	        ]);
-
 	}
+
+	
+    public function calculate(Request $request)
+    {
+        $answer = new answers();
+        $result = $answer->getCountOfPics($request);
+        return $result; // This will dump and die
+    }
+
 }
