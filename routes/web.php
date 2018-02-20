@@ -17,8 +17,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
+// Home Routs
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/home', 'HomeController@processForm')->name('formSubmit');
 
-
+// Ajax Routes
 Route::post('/calculate','HomeController@calculate')->name('calculate');

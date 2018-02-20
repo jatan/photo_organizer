@@ -77,21 +77,26 @@ class Answer extends Model
 		return self::$people;
 	}
 
-	public function getCountOfPics($query=null)
+	// Logic To Calculate Number Of Pics for the user for give selecetion
+	public function getCountOfPics($input=null)
 	{
-			$raw='';
-		if($query['people'] == null){
-			$result = $this->where('user_id',Auth::user()->id)->count();
-		}
-		else{
-			foreach ($query['people'] as $people) {
-				$raw .= $people ."=1"; 
-				if($people != $query['people'][count($query['people'])-1])
-					$raw .= " AND ";
+		$query = DB::table('answers')->where('user_id','=',Auth::user()->id);
+
+		if(isset($input['people'])){
+			foreach ($input['people'] as $people) {
+				$query->where($people,'=','1');
 			}
-			$result = $this->whereRaw($raw)->where('user_id',Auth::user()->id)->count();
 		}
 
+		if($input['frame_status']!="blank"){
+			$query->where('frame_status','=',$input['frame_status']);
+		}
+
+		if($input['photo_type']!="blank"){
+			$query->where('photo_type','=',$input['photo_type']);
+		}
+
+		$result = $query->count();
 		return $result;
 	}
 
@@ -99,7 +104,7 @@ class Answer extends Model
 	public function generateAnswers()
 	{
 		DB::table('answers')->insert([
-	            'user_id' => 1,
+	            'user_id' => 1, // USER_ID : 1 = test@gmail.com
 	            'frame_status' => random_int(0, count(self::$frameStatus)-1),
 	            'photo_type' => random_int(0, count(self::$photoType)-1),
 	            'me' => rand(0,1),
@@ -111,13 +116,4 @@ class Answer extends Model
 	            'randoms' => rand(0,1)
 	        ]);
 	}
-
-	
-    public function calculate(Request $request)
-    {
-        $answer = new answers();
-        $result = $answer->getCountOfPics($request);
-        return $result; // This will dump and die
-    }
-
 }

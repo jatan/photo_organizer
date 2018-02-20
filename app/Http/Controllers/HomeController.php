@@ -20,21 +20,36 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the application Home Page.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {   
-        $answer = new Answer();
-        $count = $answer->getCountOfPics();
+        // generating history
+        $data = DB::Table('answers')
+            -> where('user_Id','=',Auth::user()->id)
+            ->get();
+        $history = json_decode($data,1);
+        foreach ($history as $key => $value) {
+            $history[$key]['frame_status'] = Answer::getFrameValue($value['frame_status']);
+            $history[$key]['photo_type'] = Answer::getPhotoTypesValue($value['photo_type']);
+        }
+
         return view('home')->with([
             'frame_status'  => Answer::getFrameStatus(),
             'photo_types'   => Answer::getPhototypes(),
             'people'        => Answer::getPeople(),
+            'history'       => $history
+
         ]);
     }
 
+    /**
+     * Process Submission From Form
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function processForm(Request $request)
     {
         $validatedData = $request->validate([
@@ -50,10 +65,15 @@ class HomeController extends Controller
         return redirect(route('home'));
     }
 
+    /**
+     * Calculation of AJAX call 
+     *
+     * @return Integer
+     */
     public function calculate(Request $request)
     {
         $answer = new Answer();
         $result = $answer->getCountOfPics($request);
-        return $result; // This will dump and die
+        return $result;
     }
 }
